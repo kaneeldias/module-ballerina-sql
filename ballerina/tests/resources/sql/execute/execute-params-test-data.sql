@@ -68,6 +68,7 @@ CREATE TABLE DateTimeTypes(
   row_id            INT,
   date_type         DATE,
   time_type         TIME,
+  time_tz_type         TIME WITH TIME ZONE,
   timestamp_type    TIMESTAMP,
   datetime_type     DATETIME,
   timestamp_tz_type TIMESTAMP WITH TIME ZONE,

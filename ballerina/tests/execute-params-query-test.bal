@@ -436,6 +436,33 @@ function insertIntoDateTimeTable6() returns error? {
 @test:Config {
     groups: ["execute", "execute-params"]
 }
+function insertIntoDateTimeTable7() returns error? {
+    int rowId = 8;
+    time:TimeOfDay timeWithTimezoneRecord = {
+        utcOffset: {hours: -8, minutes: 0},
+        hour: 16,
+        minute: 33,
+        second: 55
+    };
+
+    ParameterizedQuery sqlQuery = `
+        INSERT INTO DateTimeTypes (row_id, time_tz_type)
+        VALUES(${rowId}, ${timeWithTimezoneRecord})
+    `;
+    validateResult(check executeQueryMockClient(sqlQuery), 1);
+
+    MockClient dbClient = check new (url = executeParamsDb, user = user, password = password);
+    time:TimeOfDay retrievedTime = check dbClient->queryRow(`
+        SELECT time_tz_type FROM DateTimeTypes WHERE row_id = ${rowId}
+    `);
+    check dbClient.close();
+
+    test:assertEquals(retrievedTime, timeWithTimezoneRecord, "Inserted data did not match retrieved data.");
+}
+
+@test:Config {
+    groups: ["execute", "execute-params"]
+}
 function insertIntoArrayTable() returns error? {
     int[] paraInt = [1, 2, 3];
     int[] paraLong = [100000000, 200000000, 300000000];
